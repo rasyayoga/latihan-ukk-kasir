@@ -20,4 +20,8 @@ class customers extends Model
         'no_hp',
         'point',
     ];
+    public function saless() 
+    {
+        return $this->hasMany(saless::class);
+    }
 }

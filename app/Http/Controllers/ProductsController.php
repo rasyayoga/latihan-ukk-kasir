@@ -12,7 +12,9 @@ class ProductsController extends Controller
      */
     public function index()
     {
-        //
+        // $products = products::all();
+        $products = products::orderBy('name', 'asc')->get();
+        return view('module.product.index', compact('products'));
     }
 
     /**
@@ -20,7 +22,7 @@ class ProductsController extends Controller
      */
     public function create()
     {
-        //
+        return view('module.product.create');
     }
 
     /**
@@ -28,8 +30,25 @@ class ProductsController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => 'required',
+            'price' => 'required|numeric',
+            'stock' => 'required|numeric',
+            'image' => 'required|image|max:2048'
+        ]);
+    
+        $imagePath = $request->file('image')->store('products', 'public');
+    
+        products::create([
+            'name' => $request->name,
+            'price' => $request->price,
+            'stock' => $request->stock,
+            'image' => $imagePath
+        ]);
+    
+        return redirect()->route('product')->with('success', 'Berhasil Membuat Product');
     }
+
 
     /**
      * Display the specified resource.
@@ -42,24 +61,65 @@ class ProductsController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(products $products)
+    public function edit($id)
     {
-        //
+        $item = products::findOrFail($id);
+        return view('module.product.edit', compact('item'));
     }
+    
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, products $products)
+    public function update(Request $request, $id)
     {
-        //
+        $request->validate([
+            'name' => 'required',
+            'price' => 'required|numeric',
+            // 'stock' => 'required|numeric',
+            'image' => 'nullable|image|max:2048' // Nullable agar tidak wajib upload gambar baru
+        ]);
+    
+        $product = Products::findOrFail($id);
+    
+        // Jika ada gambar baru yang diupload
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('products', 'public');
+            $product->image = $imagePath;
+        }
+    
+        // Update data produk
+        $product->update([
+            'name' => $request->name,
+            'price' => $request->price,
+            // 'stock' => $request->stock,
+        ]);
+    
+        return redirect()->route('product')->with('success', 'Produk berhasil diperbarui!');
+    }
+    
+    public function updateStock(Request $request, $id)
+    {
+        $request->validate([
+            'stock' => 'required|numeric|min:0',
+        ]);
+    
+        // Cari produk berdasarkan ID
+        $product = Products::findOrFail($id);
+    
+        // Update hanya stok produk
+        $product->update([
+            'stock' => $request->stock,
+        ]);
+        return redirect()->route('product')->with('success', 'Stock berhasil diperbarui!');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(products $products)
+    public function destroy(products $products, $id)
     {
-        //
+        products::where('id', $id)->delete();
+        return redirect()->route('product')->with('success', 'Berhasil Hapus Product');
     }
 }

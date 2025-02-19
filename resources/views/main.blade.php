@@ -25,16 +25,38 @@
                     <div class="col-6">
                         <nav aria-label="breadcrumb">
                             <ol class="breadcrumb mb-0 d-flex align-items-center">
-                              <li class="breadcrumb-item"><a href="index.html" class="link"><i class="mdi mdi-home-outline fs-4"></i></a></li>
-                              <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
+                              <li class="breadcrumb-item"><a href="{{ route('dashboard') }}" class="link"><i class="mdi mdi-home-outline fs-4"></i></a></li>
+                              <li class="breadcrumb-item active" aria-current="page" id="breadcrumb-text">
+                                @if(Route::currentRouteName() == 'dashboard')
+                                    Dashboard
+                                @elseif(Route::currentRouteName() == 'product')
+                                    Product
+                                @elseif(Route::currentRouteName() == 'product.create')
+                                    Create Product
+                                @elseif(Route::currentRouteName() == 'product.edit')
+                                    Update Product
+                                @elseif(Route::currentRouteName() == 'user.list')
+                                     User
+                                @elseif(Route::currentRouteName() == 'user.create')
+                                     User Create
+                                @elseif(Route::currentRouteName() == 'user.edit')
+                                     User Edit 
+                                @else
+                                    Halaman Tidak Diketahui
+                                @endif
+                              </li>
                             </ol>
                           </nav>
-                        <h1 class="mb-0 fw-bold">Dashboard</h1>
+                          <h1 class="mb-0 fw-bold" id="page-title"></h1>
                     </div>
-
                 </div>
             </div>
-
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                  const breadcrumbText = document.getElementById("breadcrumb-text").innerText;
+                  document.getElementById("page-title").innerText = breadcrumbText;
+                });
+              </script>
             <div class="container-fluid">
                 @yield('content')
             </div>
@@ -44,6 +66,7 @@
     </div>
 
     @include('layout.include-footer')
+    @stack('script')
 </body>
 
 </html>

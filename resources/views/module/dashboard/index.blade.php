@@ -9,21 +9,10 @@
             <div class="card-body">
                 <div class="d-md-flex align-items-center">
                     <div>
-                        <h4 class="card-title">Sales Summary</h4>
-                        <h6 class="card-subtitle">Ample admin Vs Pixel admin</h6>
-                    </div>
-                    <div class="ms-auto d-flex no-block align-items-center">
-                        <ul class="list-inline dl d-flex align-items-center m-r-15 m-b-0">
-                            <li class="list-inline-item d-flex align-items-center text-info"><i class="fa fa-circle font-10 me-1"></i> Ample
-                            </li>
-                            <li class="list-inline-item d-flex align-items-center text-primary"><i class="fa fa-circle font-10 me-1"></i> Pixel
-                            </li>
-                        </ul>
+                        <h4 class="card-title">Selamat Datang</h4>
                     </div>
                 </div>
-                <div class="amp-pxl mt-4" style="height: 350px;">
-                    <div class="chartist-tooltip"></div>
-                </div>
+                     <canvas id="salesChart"></canvas>
             </div>
         </div>
     </div>
@@ -97,5 +86,39 @@
         </div>
     </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var chart = document.getElementById('salesChart')?.getContext('2d');
+        if (!chart) {
+            console.error("Canvas dengan id 'salesChart' tidak ditemukan!");
+            return;
+        }
 
+        var labels = @json($labels); 
+        var salesData = @json($salesData);
+
+        var salesChart = new Chart(chart, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Jumlah Penjualan',
+                    data: salesData,
+                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    });
+</script>
 @endsection
