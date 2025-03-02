@@ -41,6 +41,8 @@
                                      User Create
                                 @elseif(Route::currentRouteName() == 'user.edit')
                                      User Edit 
+                                @elseif(Route::currentRouteName() == 'sales')
+                                     sales
                                 @else
                                     Halaman Tidak Diketahui
                                 @endif

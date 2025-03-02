@@ -6,35 +6,64 @@ use App\Http\Controllers\SalessController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
+
+Route::middleware(['guest'])->group(function () {
+    Route::get('/', [UserController::class, 'loginpage'])->name('login.page');
+    Route::post('/', [UserController::class, 'login'])->name('login');
 });
 
-Route::fallback(function () {
-    return redirect()->route('dashboard');
+Route::middleware(['auth'])->group(function () {
+    Route::get('/logout', [UserController::class, 'logout'])->name('logout');
+    Route::get('/logout', [UserController::class, 'logout'])->name('logout');
+    Route::get('/dashboard',[DetailSalesController::class, 'index'])->name('dashboard');
+    Route::get('/product',[ProductsController::class, 'index'])->name('product');
+    Route::get('/sales',[SalessController::class, 'index'])->name('sales');
+    Route::get('/sales/print/{id}',[DetailSalesController::class, 'show'])->name('sales.print.show');
+});
+
+Route::middleware(['auth', 'is_admin'])->group(function () {
+    
+    Route::prefix('/product')->name('product.')->group(function () { 
+        Route::put('/edit-stock/{id}', [ProductsController::class, 'updateStock'])->name('stock'); 
+        Route::get('/create', [ProductsController::class, 'create'])->name('create');
+        Route::post('/store', [ProductsController::class, 'store'])->name('store');
+        Route::delete('/{id}', [ProductsController::class, 'destroy'])->name('delete');
+        Route::get('/edit/{id}', [ProductsController::class, 'edit'])->name('edit');
+        Route::put('/edit/{id}', [ProductsController::class, 'update'])->name('update');
+    });
+
+    Route::prefix('/user')->name('user.')->group(function () {
+        Route::get('/', [UserController::class, 'index'])->name('list');
+        Route::get('/create', [UserController::class, 'create'])->name('create');
+        Route::post('/store', [UserController::class, 'store'])->name('store');
+        Route::get('/edit/{id}', [UserController::class, 'edit'])->name('edit');
+        Route::put('/update/{id}', [UserController::class, 'update'])->name('update');
+        Route::delete('/{id}', [UserController::class, 'destroy'])->name('delete');
+    });
 });
 
 
-Route::get('/dashboard',[DetailSalesController::class, 'index'])->name('dashboard');
+Route::middleware(['auth', 'is_employee'])->group(function () {
+    Route::get('/sales/create',[SalessController::class, 'create'])->name('sales.create');
+    Route::post('/sales/create/post',[SalessController::class, 'store'])->name('sales.store');
+    Route::post('/sales/create/post/createsales',[SalessController::class, 'createsales'])->name('sales.createsales');
+    Route::get('/sales/create/post',[SalessController::class, 'post'])->name('sales.post');
+    Route::get('/sale/create/member/{id}', [SalessController::class, 'createmember'])->name('sales.create.member');
+});
+
+Route::get('/download/{id}', [DetailSalesController::class, 'downloadPDF'])->name('download');
 
 
-Route::get('/product',[ProductsController::class, 'index'])->name('product');
-Route::put('/product/{id}', [ProductsController::class, 'updateStock'])->name('product.stock');
-Route::get('/product/create', [ProductsController::class, 'create'])->name('product.create');
-Route::post('/product/store', [ProductsController::class, 'store'])->name('product.store');
-Route::delete('/product/{id}', [ProductsController::class, 'destroy'])->name('product.delete');
-Route::get('/product/edit/{id}', [ProductsController::class, 'edit'])->name('product.edit');
-Route::put('/product/edit/{id}', [ProductsController::class, 'update'])->name('product.update');
+// Route::get('/sales/create',[SalessController::class, 'create'])->name('sales.create');
+// Route::post('/sales/create/post',[SalessController::class, 'store'])->name('sales.store');
+// Route::post('/sales/create/post/createsales',[SalessController::class, 'createsales'])->name('sales.createsales');
+// Route::get('/sales/create/post',[SalessController::class, 'post'])->name('sales.post');
+// Route::get('/sales/print/{id}',[DetailSalesController::class, 'show'])->name('sales.print.show');
+// Route::get('/sale/create/member/{id}', [SalessController::class, 'createmember'])->name('sales.create.member');
 
-Route::get('/user',[UserController::class, 'index'])->name('user.list');
-Route::get('/user/create',[UserController::class, 'create'])->name('user.create');
-Route::post('/user/store',[UserController::class, 'store'])->name('user.store');
-//contoh route adalah jika id tidak ditemukan/akses memakai text maka akan diarahkan ke route user.list
-Route::get('/user/edit/{id}', [UserController::class, 'edit'])->where('id', '[0-9]+')->name('user.edit');
-Route::put('/user/update/{id}',[UserController::class, 'update'])->name('user.update');
-Route::delete('/user/{id}',[UserController::class, 'destroy'])->name('user.delete');
 
-Route::get('/sales',[SalessController::class, 'index'])->name('sales');
-Route::get('/sales/create',[SalessController::class, 'create'])->name('sales.create');
-Route::post('/sales/create/post',[SalessController::class, 'store'])->name('sales.store');
-Route::get('/sales/create/post',[SalessController::class, 'post'])->name('sales.post');
+Route::get('/logout', [UserController::class, 'logout'])->name('logout');
+
+// Route::fallback(function () {
+//     return redirect()->route('dashboard');
+// });

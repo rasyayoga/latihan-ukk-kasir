@@ -11,7 +11,7 @@ class saless extends Model
     use HasFactory, Notifiable;
     protected $table = 'saless';
     protected $fillable = [
-        'sales_data',
+        'sale_date',
         'total_price',
         'total_pay',
         'total_return',

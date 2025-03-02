@@ -34,7 +34,9 @@ class ProductsController extends Controller
             'name' => 'required',
             'price' => 'required|numeric',
             'stock' => 'required|numeric',
-            'image' => 'required|image|max:2048'
+            'image' => 'required|image|max:8192' //max 8mb
+        ],[
+            'image.max' => 'Silahkan pilih foto yang tidak lebih dari 8mb'
         ]);
     
         $imagePath = $request->file('image')->store('products', 'public');

@@ -3,8 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\detail_sales;
+use App\Models\saless;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade as PDF;
+use Barryvdh\DomPDF\Facade\Pdf as FacadePdf;
+use Illuminate\Support\Facades\Log;
+
 
 class DetailSalesController extends Controller
 {
@@ -13,25 +18,52 @@ class DetailSalesController extends Controller
      */
     public function index()
     {
+        $currentDate = Carbon::now()->toDateString();
         $currentMonth = Carbon::now()->month;
         $currentYear = Carbon::now()->year;
     
+        // Hitung jumlah transaksi (data yang terbuat) hari ini
+        $todaySalesCount = detail_sales::whereDate('created_at', $currentDate)->count();
+    
         // Ambil total penjualan hanya untuk hari yang memiliki transaksi
-        $sales = detail_sales::selectRaw('EXTRACT(DAY FROM created_at) AS day, SUM(amount) AS total')
+        $sales = detail_sales::selectRaw('EXTRACT(DAY FROM created_at) AS day, COUNT(*) AS total')
             ->whereRaw('EXTRACT(MONTH FROM created_at) = ?', [$currentMonth])
             ->whereRaw('EXTRACT(YEAR FROM created_at) = ?', [$currentYear])
             ->groupByRaw('EXTRACT(DAY FROM created_at)')
             ->orderByRaw('EXTRACT(DAY FROM created_at)')
             ->get();
-            $detail_sales = detail_sales::with('saless', 'product')->get();
+    
+        $detail_sales = detail_sales::with('saless', 'product')->get();
+    
         // Ubah hasil query menjadi array terstruktur
         $labels = $sales->pluck('day')->map(fn($day) => $day . ' ' . Carbon::now()->format('F'))->toArray();
         $salesData = $sales->pluck('total')->toArray();
-
     
-        return view('module.dashboard.index', compact('labels', 'salesData', 'detail_sales'));
+        return view('module.dashboard.index', compact('labels', 'salesData', 'detail_sales', 'todaySalesCount'));
     }
+    
 
+    public function show($id)
+    {
+        // $detail_sales = saless::findOrFail($id); 
+        $sale = saless::with('detail_sales.product')->findOrFail($id);
+        // dd($detail_sales);
+        return view('module.pembelian.print-sale', compact('sale'));
+    }
+    
+    public function downloadPDF($id) {
+        try {
+            $sale = saless::with('detail_sales.product')->findOrFail($id);
+    
+            $pdf = FacadePdf::loadView('module.pembelian.download', ['sale' => $sale]);
+            Log::info('PDF berhasil diunduh untuk transaksi dengan ID ' . $id);
+    
+            return $pdf->download('Surat_receipt.pdf');
+        } catch (\Exception $e) {
+            Log::error('Gagal mengunduh PDF: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Gagal mengunduh PDF');
+        }
+    }
     /**
      * Show the form for creating a new resource.
      */
@@ -51,10 +83,7 @@ class DetailSalesController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(detail_sales $detail_sales)
-    {
-        //
-    }
+
 
     /**
      * Show the form for editing the specified resource.

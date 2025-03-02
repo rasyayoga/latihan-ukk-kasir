@@ -33,9 +33,11 @@
                     </script>
                     @endif
                     <h4 class="card-title mb-0">Daftar Produk</h4>
-                    <a href="{{ route('product.create') }}">
-                        <button type="button" class="btn btn-info mb-4">Tambah Data</button>
-                    </a>
+                    @if(Auth::user()->role === 'admin')          
+                        <a href="{{ route('product.create') }}">
+                            <button type="button" class="btn btn-info mb-4">Tambah Data</button>
+                        </a>
+                    @endif
                 </div>
                 <div class="table-responsive">
                     <table class="table table-bordered">
@@ -46,7 +48,9 @@
                                 <th>Nama Produk</th>
                                 <th>Harga</th>
                                 <th>Stok</th>
+                                @if(Auth::user()->role === 'admin') 
                                 <th>Action</th>
+                                @endif
                             </tr>
                         </thead>
                         <tbody>
@@ -57,6 +61,7 @@
                                 <td>{{ $product->name }}</td>
                                 <td>Rp {{ number_format($product->price, 0, ',', '.') }}</td>
                                 <td>{{ $product->stock }}</td>
+                                @if(Auth::user()->role === 'admin') 
                                 <td>
                                     <a href="{{ route('product.edit', $product->id) }}" class="btn btn-warning">Edit</a>
                                     
@@ -64,13 +69,14 @@
                                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#updateStockModal{{ $product->id }}">
                                         Update Stock
                                     </button>   
-
+                
                                     <form action="{{ route('product.delete', $product->id) }}" method="POST" class="d-inline">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-danger" onclick="return confirm('Yakin ingin menghapus produk ini?')">Hapus</button>
                                     </form>
                                 </td>
+                                @endif
                             </tr>
 
                             <!-- Modal untuk tiap produk -->

@@ -17,13 +17,13 @@
                                 </div>
                             </div>
                         </div>
-                        {{-- @if (Auth::user()->role == 'employee') --}}
+                        @if (Auth::user()->role == 'employee')
                         <div class="col text-end">
                             <a href="{{ route('sales.create') }}" class="btn btn-primary">
                                 Tambah Penjualan
                             </a>
                         </div>
-                        {{-- @endif --}}
+                        @endif
                     </div>
                     <div class="table-responsive">
                         <table id="salesTable" class="table">
@@ -47,11 +47,11 @@
                                         <td>{{ $sale->customer ? $sale->customer->name : 'NON-MEMBER' }}</td>
                                         <td>{{ $sale->sale_date }}</td>
                                         <td>{{ 'Rp. ' . number_format($sale->total_price,'0', ',', '.') }}</td>
-                                        <td>{{ $sale->user->name }}</td>
+                                        <td>{{ $sale->user->name ?? 'Pegawai Tidak Ada' }}</td>
                                         <td>
                                             <div class="d-flex justify-content-around">
                                                 <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#lihat-{{$sale->id}}">Lihat</button>
-                                                <a href="#" class="btn btn-info">Unduh Bukti</a>
+                                                <a href="{{ route('download', $sale->id) }}" class="btn btn-info">Unduh Bukti</a>
                                             </div>
                                         </td>
                                     </tr>
@@ -99,7 +99,7 @@
                                                     </div>
                                                     <div class="row mt-3">
                                                         <center>
-                                                            Dibuat pada : {{ $sale->created_at }}  <br> Oleh : {{ $sale->user->name }}
+                                                            Dibuat pada : {{ $sale->created_at }}  <br> Oleh : {{ $sale->user->name ?? 'Pegawai Tidak Ada' }}
                                                         </center>
                                                     </div>
                                                 </div>

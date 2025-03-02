@@ -1,5 +1,5 @@
 @extends('main')
-@section('title', '| tambah pembelian')
+@section('title', '| Pilih Product')
 
 @section('content')
     <div class="container-fluid">
@@ -104,73 +104,57 @@
                     return rupiah;
                 }
 
-                    $('#plus_' + item.id).click(function(e) {
+                $('#plus_' + item.id).click(function(e) {
                     const elem = $(this).prev();
-                    const getId = elem.attr("id").split("_")[1]; // Ambil ID produk
-                    const price = parseInt($("#price_" + getId).html()); // Harga produk
-                    let qty = parseInt(elem.html()) + 1; // Tambah qty
+                    const getId = elem.attr("id").split("_")[1]; // To find the price id
+                    const price = $("#price_" + getId).html(); // price amount
+                    let qty = parseInt(elem.html()) + 1;
 
                     // Cek apakah qty melebihi stok
                     if (qty > item.stock) {
                         alert("Stok kurang!");
-                        elem.html(item.stock);
-                        return;
+                        elem.html(item.stock); // Set qty ke stok maksimum
+                        qty = item.stock; // Set qty ke stok maksimum
                     }
 
-                    elem.html(qty);
-                    let total = price * qty;
-
-                    // Cek apakah produk sudah ada di shop
-                    let existingInput = $('#shop input[name="shop[]"][value^="' + getId + ';"]');
-                    
-                    console.log("ID Produk:", getId);
-                    console.log("Existing Input:", existingInput.length);
-                    console.log("Qty:", qty);
-                    console.log("Total:", total);
-
-                    if (existingInput.length > 0) {
-                        // Jika produk sudah ada, update qty dan totalnya
-                        let values = existingInput.val().split(';');
-                        values[3] = qty; // Update qty
-                        values[4] = total; // Update total
-                        existingInput.val(values.join(';')); // Update input
-
-                        console.log("Updated Value:", existingInput.val());
-                    } else {
-                        // Jika belum ada, tambahkan sebagai produk baru
-                        let shop = getId + `;` + item.name + `;` + item.price + `;` + qty + `;` + total + `;`;
-                        $('#shop').append(`<input name="shop[]" value="` + shop + `" type="text" hidden />`);
-
-                        console.log("New Input Added:", shop);
-                    }
-
-                    // Update tampilan total
-                    $("#total_" + item.id).html("Rp. " + formatRupiah(total));
-                });
-
-
-                $('#minus_' + item.id).click(function(e) {
-                    const elem = $(this).next();
-                    const getId = elem.attr("id").split("_")[1]; // To find the price id
-                    const price = $("#price_" + getId).html(); // price amount
-                    let qty = parseInt(elem.html());
-
-                    if (qty > 0) {
-                        qty--;
-                    }
                     elem.html(qty);
                     let total = price * qty;
                     $("#total_" + item.id).html("Rp. " + formatRupiah(
                     total)); // set total, assume total is qty * price
 
                     if (qty > 0) {
-                        let shop = `` + item.id + `;` + item.name + `;` + item.price + `;` + qty +
-                            `;` + total + `;`;
                         $('#shop').append(`
-                    <input name="shop[]" value="` + shop + ` " type="text" hidden />
-                `);
+                            <input id="shop_item_${item.id}" name="shop[]" value="${item.id};${item.name};${item.price};${qty};${total}" type="hidden" />
+                        `);
                     }
+
                 });
+
+                $('#minus_' + item.id).click(function(e) {
+    const elem = $(this).next();
+    const getId = elem.attr("id").split("_")[1]; 
+    const price = parseInt($("#price_" + getId).html());
+    let qty = parseInt(elem.html());
+
+    if (qty > 0) {
+        qty--;
+    }
+
+    elem.html(qty);
+    let total = price * qty;
+    $("#total_" + item.id).html("Rp. " + formatRupiah(total));
+
+    // Hapus input lama agar tidak ada duplikasi
+    $("#shop_item_" + item.id).remove();
+
+    // Jika qty lebih dari 0, tambahkan input baru
+    if (qty > 0) {
+        $('#shop').append(`
+            <input id="shop_item_${item.id}" name="shop[]" value="${item.id};${item.name};${item.price};${qty};${total}" type="hidden" />
+        `);
+    }
+});
+
             });
         });
     </script>

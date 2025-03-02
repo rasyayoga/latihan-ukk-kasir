@@ -16,11 +16,11 @@ return new class extends Migration
             $table->date("sale_date");
             $table->integer("total_price");
             $table->integer("total_pay");
-            $table->integer("total_return");
-            $table->integer("customer_id");
+            $table->integer("total_return")->nullable();
+            $table->integer("customer_id")->nullable();
             $table->integer("user_id");
-            $table->integer("point");
-            $table->integer("total_point");
+            $table->integer("point")->nullable();
+            $table->integer("total_point")->nullable();
             $table->timestamps();
         });
     }
