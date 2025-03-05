@@ -7,10 +7,8 @@
             <div class="col-12">
                 <div class="card">
                     <div class="card-body">
-                        {{-- <form action="{{ route('sale.store.customer') }}" method="POST"> --}}
-                            <form action="" method="POST">
+                        <form action="{{ route('sales.print.show', ['id' => $sale['id']]) }}" method="GET">
                             @csrf
-                            @method('POST')
                             @if (Session::get('error'))
                                 <div class="alert alert-danger">
                                     {{ Session::get('error') }}
@@ -35,7 +33,6 @@
                                                 </td>
                                             </tr>
                                             @foreach ($sale['detail_sales'] as $item)
-                                        
                                                 <tr class="service">
                                                     <td class="tableitem">
                                                         <p class="itemtext">{{ $item['product']['name'] }}</p>
@@ -45,14 +42,14 @@
                                                     </td>
                                                     <td class="tableitem">
                                                         <p class="itemtext">Rp.
-                                                            {{ number_format($item['product']['price'], '0', ',', '.') }}</p>
+                                                            {{ number_format($item['product']['price'], '0', ',', '.') }}
+                                                        </p>
                                                     </td>
-                               
                                                 </tr>
                                             @endforeach
                                             <tr class="tabletitle">
                                                 <td></td>
-                                                <td>    @dd($sale)</td>
+                                                <td></td>
                                                 <td>
                                                     <h4>Total Harga</h4>
                                                 </td>
@@ -74,25 +71,29 @@
                                     </div>
                                 </div>
                                 <div class="col-lg-6 col-md-12">
-                                    {{-- <div class="row">
+                                    <div class="row">
                                         <input type="hidden" name="sale_id" value="{{ $sale['id'] }}">
                                         <input type="hidden" name="customer_id" value="{{ $sale['customer_id'] }}">
                                         <div class="form-group">
                                             <label for="name" class="form-label">Nama Member (identitas)</label>
-                                            <input type="text" name="name" id="name" class="form-control" required value="{{ $sale['customer']['name'] }}">
+                                            <input type="text" name="name" id="name" class="form-control"
+                                                required value="{{ $sale['customer']['name'] }}">
                                         </div>
                                         <div class="form-group">
                                             <label for="poin" class="form-label">Poin</label>
-                                            <input type="text" name="poin" id="poin" value="{{ $sale['customer']['poin'] }}" disabled class="form-control">
+                                            <input type="text" name="point" id="poin"
+                                                value="{{ $sale['customer']['point'] }}" disabled class="form-control">
                                         </div>
                                         <div class="form-check ms-4">
-                                            <input class="form-check-input" type="checkbox" value="Ya" id="check2" {{ $countSale > 1 ? '' : 'disabled' }} name="check_poin">
+                                            <input class="form-check-input" type="checkbox" value="Ya" id="check2"
+                                                {{ $notFirst ? '' : 'disabled' }} name="check_poin">
                                             <label class="form-check-label" for="check2">
                                                 Gunakan poin
                                             </label>
-                                            <small class="text-danger">{{ $countSale > 1 ? '' : 'Poin tidak dapat digunakan pada pembelanjaan pertama.'}}</small>
+                                            <small
+                                                class="text-danger">{{ $notFirst ? '' : 'Poin tidak dapat digunakan pada pembelanjaan pertama.' }}</small>
                                         </div>
-                                    </div> --}}
+                                    </div>
                                     <div class="row text-end">
                                         <div class="col-md-12">
                                             <button class="btn btn-primary" type="submit">Selanjutnya</button>

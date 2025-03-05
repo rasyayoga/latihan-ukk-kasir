@@ -23,9 +23,8 @@ Route::middleware(['auth'])->group(function () {
 });
 
 Route::middleware(['auth', 'is_admin'])->group(function () {
-    
-    Route::prefix('/product')->name('product.')->group(function () { 
-        Route::put('/edit-stock/{id}', [ProductsController::class, 'updateStock'])->name('stock'); 
+    Route::prefix('/product')->name('product.')->group(function () {
+        Route::put('/edit-stock/{id}', [ProductsController::class, 'updateStock'])->name('stock');
         Route::get('/create', [ProductsController::class, 'create'])->name('create');
         Route::post('/store', [ProductsController::class, 'store'])->name('store');
         Route::delete('/{id}', [ProductsController::class, 'destroy'])->name('delete');
@@ -53,7 +52,6 @@ Route::middleware(['auth', 'is_employee'])->group(function () {
         Route::get('/print/{id}',[DetailSalesController::class, 'show'])->name('print.show');
         Route::get('/create/member/{id}', [SalessController::class, 'createmember'])->name('create.member');
     });
-    
 });
 
 

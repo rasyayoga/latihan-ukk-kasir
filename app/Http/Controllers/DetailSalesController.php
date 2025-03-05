@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\customers;
 use App\Models\detail_sales;
 use App\Models\saless;
 use Carbon\Carbon;
@@ -21,10 +22,10 @@ class DetailSalesController extends Controller
         $currentDate = Carbon::now()->toDateString();
         $currentMonth = Carbon::now()->month;
         $currentYear = Carbon::now()->year;
-    
+
         // Hitung jumlah transaksi (data yang terbuat) hari ini
         $todaySalesCount = detail_sales::whereDate('created_at', $currentDate)->count();
-    
+
         // Ambil total penjualan hanya untuk hari yang memiliki transaksi
         $sales = detail_sales::selectRaw('EXTRACT(DAY FROM created_at) AS day, COUNT(*) AS total')
             ->whereRaw('EXTRACT(MONTH FROM created_at) = ?', [$currentMonth])
@@ -32,32 +33,43 @@ class DetailSalesController extends Controller
             ->groupByRaw('EXTRACT(DAY FROM created_at)')
             ->orderByRaw('EXTRACT(DAY FROM created_at)')
             ->get();
-    
+
         $detail_sales = detail_sales::with('saless', 'product')->get();
-    
+
         // Ubah hasil query menjadi array terstruktur
         $labels = $sales->pluck('day')->map(fn($day) => $day . ' ' . Carbon::now()->format('F'))->toArray();
         $salesData = $sales->pluck('total')->toArray();
-    
+
         return view('module.dashboard.index', compact('labels', 'salesData', 'detail_sales', 'todaySalesCount'));
     }
-    
 
-    public function show($id)
+
+    public function show(Request $request, $id)
     {
-        // $detail_sales = saless::findOrFail($id); 
+        // Ambil sale berdasarkan id
         $sale = saless::with('detail_sales.product')->findOrFail($id);
-        // dd($detail_sales);
+        // check request apakah dia ngirim request poin yang artinya dia adalah member jika tidak ada maka dia non member
+        if($request->check_poin){
+            // Proses pengurangan point
+            $customer = customers::where('id', $request->customer_id)->first();
+            $sale->update([
+                'total_point' => $customer->point,
+            ]);
+            $customer->update([
+                'name' => $request->name,
+                'point' => 0
+            ]);
+        }
         return view('module.pembelian.print-sale', compact('sale'));
     }
-    
+
     public function downloadPDF($id) {
         try {
             $sale = saless::with('detail_sales.product')->findOrFail($id);
-    
+
             $pdf = FacadePdf::loadView('module.pembelian.download', ['sale' => $sale]);
             Log::info('PDF berhasil diunduh untuk transaksi dengan ID ' . $id);
-    
+
             return $pdf->download('Surat_receipt.pdf');
         } catch (\Exception $e) {
             Log::error('Gagal mengunduh PDF: ' . $e->getMessage());

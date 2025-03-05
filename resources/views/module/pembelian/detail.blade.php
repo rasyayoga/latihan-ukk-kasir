@@ -8,10 +8,9 @@
                 <div class="card">
                     <div class="card-body">
                         @error('total_pay')
-                        <div class="alert alert-danger">{{ $message }}</div>
-                         @enderror
-                    
-                        <form action="{{ route('sales.createsales') }}" method="POST" >
+                            <div class="alert alert-danger">{{ $message }}</div>
+                        @enderror
+                        <form action="{{ route('sales.createsales') }}" method="POST">
                             @csrf
                             @method('POST')
                             @if (Session::get('error'))
@@ -41,18 +40,20 @@
                                                 </tr>
                                                 @php
                                                     array_push($total, explode(';', $item)[4]);
-                                            
                                                 @endphp
                                             @endforeach
                                             <tr>
                                                 <td style="padding-top: 20px; font-size: 20px;"><b>Total</b></td>
-                                                <td class="tex-end" style="padding-createsalestop: 20px; font-size: 20px;"><b>Rp.
-                                                        {{ number_format(array_sum($total), '0', ',', '.') }}</b></td>
+                                                <td class="tex-end" style="padding-createsalestop: 20px; font-size: 20px;">
+                                                    <b>Rp.
+                                                        {{ number_format(array_sum($total), '0', ',', '.') }}</b>
+                                                </td>
                                             </tr>
                                         </tbody>
                                     </table>
-                                    <input type="hidden" name="total_price" id="total_price" value="{{ array_sum($total) }}">
-                                    
+                                    <input type="hidden" name="total_price" id="total_price"
+                                        value="{{ array_sum($total) }}">
+
                                 </div>
                                 <div class="col-lg-6 col-md-12">
                                     <div class="row">
