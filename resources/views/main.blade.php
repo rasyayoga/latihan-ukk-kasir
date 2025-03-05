@@ -43,6 +43,12 @@
                                      User Edit 
                                 @elseif(Route::currentRouteName() == 'sales')
                                      sales
+                                @elseif(Route::currentRouteName() == 'sales.create')
+                                     Buat Penjualan
+                                @elseif(Route::currentRouteName() == 'sales.post')
+                                     Buat Penjualan / Detail Harga
+                                @elseif(Route::currentRouteName() == 'sales.print.show')
+                                     Print Invoice
                                 @else
                                     Halaman Tidak Diketahui
                                 @endif

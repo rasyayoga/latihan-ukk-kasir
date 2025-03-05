@@ -19,7 +19,7 @@ class IsEmployee
         if (Auth::user()->role == 'employee') {
             return $next($request);
         } else {
-            return redirect()->route('dashboard');
+            return redirect()->back();
         }
     }
 }

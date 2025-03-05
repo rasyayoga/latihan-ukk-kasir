@@ -13,21 +13,21 @@
         <!-- Nama Produk -->
         <div class="mb-3">
           <label for="name" class="form-label">Nama Produk</label>
-          <input type="text" class="form-control border-secondary"  id="name" name="name" required>
+          <input type="text" class="form-control border-secondary"  id="name" name="name" required value={{ old('name') }}>
         </div>
       
         <!-- Harga -->
         <div class="mb-3">
           <label for="price" class="form-label">Harga</label>
           <input type="number" class="form-control border-secondary"  id="price" name="price" required max="9999999999" 
-          oninput="this.value = this.value.slice(0, 10)">
+          oninput="this.value = this.value.slice(0, 10)" value={{ old('price') }}>
         </div>
       
         <!-- Stok -->
         <div class="mb-3">
           <label for="stock" class="form-label">Stock</label>
           <input type="number" class="form-control border-secondary"  id="stock" name="stock" required max="9999999999" 
-          oninput="this.value = this.value.slice(0, 10)">
+          oninput="this.value = this.value.slice(0, 10)" value="{{ old('stock') }}">
         </div>
       
         <!-- Gambar Produk -->

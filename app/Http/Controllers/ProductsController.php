@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\detail_sales;
 use App\Models\products;
 use Illuminate\Http\Request;
 
@@ -79,7 +80,7 @@ class ProductsController extends Controller
             'name' => 'required',
             'price' => 'required|numeric',
             // 'stock' => 'required|numeric',
-            'image' => 'nullable|image|max:2048' // Nullable agar tidak wajib upload gambar baru
+            'image' => 'nullable|image|max:8192' // Nullable agar tidak wajib upload gambar baru
         ]);
     
         $product = Products::findOrFail($id);
@@ -119,9 +120,19 @@ class ProductsController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(products $products, $id)
+    public function destroy($id)
     {
+        // Cek apakah produk memiliki relasi di detail_sales
+        $isProductUsed = detail_sales::where('product_id', $id)->exists();
+    
+        if ($isProductUsed) {
+            return redirect()->route('product')->with('error', 'Produk tidak bisa dihapus karena sudah masuk transaksi.');
+        }
+    
+        // Jika tidak ada relasi, hapus produk
         products::where('id', $id)->delete();
-        return redirect()->route('product')->with('success', 'Berhasil Hapus Product');
+        
+        return redirect()->route('product')->with('success', 'Berhasil menghapus produk.');
     }
+    
 }

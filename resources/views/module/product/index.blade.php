@@ -20,19 +20,15 @@
                         });
                     </script>
                     @endif
-
-                    @if ($errors->any())
-                    <script>
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Oops...',
-                            html: `{!! implode('<br>', $errors->all()) !!}`,
-                            confirmButtonColor: '#d33',
-                            confirmButtonText: 'Tutup'
-                        });
-                    </script>
-                    @endif
+       
                     <h4 class="card-title mb-0">Daftar Produk</h4>
+                    
+                    @if (Session::get('error'))
+                    <div class="alert alert-danger">
+                        {{ Session::get('error') }}
+                    </div>
+                     @endif
+             
                     @if(Auth::user()->role === 'admin')          
                         <a href="{{ route('product.create') }}">
                             <button type="button" class="btn btn-info mb-4">Tambah Data</button>
