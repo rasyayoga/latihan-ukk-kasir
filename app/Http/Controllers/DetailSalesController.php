@@ -54,6 +54,9 @@ class DetailSalesController extends Controller
             $customer = customers::where('id', $request->customer_id)->first();
             $sale->update([
                 'total_point' => $customer->point,
+                'total_pay' => $sale->total_pay - $customer->point,
+                'total_return' => $sale->total_return + $customer->point
+
             ]);
             $customer->update([
                 'name' => $request->name,

@@ -151,7 +151,7 @@
                                         <div class="sub-price">
                                             <small>POIN DIGUNAKAN</small>
                                             <span
-                                                class="text-inverse">{{ $sale['point'] }}</span>
+                                                class="text-inverse">{{ $sale['total_point'] }}</span>
                                         </div>
                                         <div class="sub-price">
                                             <small>KASIR</small>
