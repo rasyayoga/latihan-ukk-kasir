@@ -49,76 +49,60 @@
         <div class="col-lg-4">
             <div class="card">
                 <div class="card-body">
-                    <h4 class="card-title">Weekly Stats</h4>
-                    <h6 class="card-subtitle">Average sales</h6>
-                    <div class="mt-5 pb-3 d-flex align-items-center">
-                        <span class="btn btn-primary btn-circle d-flex align-items-center">
-                            <i class="mdi mdi-cart-outline fs-4"></i>
-                        </span>
-                        <div class="ms-3">
-                            <h5 class="mb-0 fw-bold">Top Sales</h5>
-                            <span class="text-muted fs-6">Johnathan Doe</span>
-                        </div>
-                        <div class="ms-auto">
-                            <span class="badge bg-light text-muted">+68%</span>
-                        </div>
-                    </div>
-                    <div class="py-3 d-flex align-items-center">
-                        <span class="btn btn-warning btn-circle d-flex align-items-center">
-                            <i class="mdi mdi-star-circle fs-4"></i>
-                        </span>
-                        <div class="ms-3">
-                            <h5 class="mb-0 fw-bold">Best Seller</h5>
-                            <span class="text-muted fs-6">MaterialPro Admin</span>
-                        </div>
-                        <div class="ms-auto">
-                            <span class="badge bg-light text-muted">+68%</span>
-                        </div>
-                    </div>
-                    <div class="py-3 d-flex align-items-center">
-                        <span class="btn btn-success btn-circle d-flex align-items-center">
-                            <i class="mdi mdi-comment-multiple-outline text-white fs-4"></i>
-                        </span>
-                        <div class="ms-3">
-                            <h5 class="mb-0 fw-bold">Most Commented</h5>
-                            <span class="text-muted fs-6">Ample Admin</span>
-                        </div>
-                        <div class="ms-auto">
-                            <span class="badge bg-light text-muted">+68%</span>
-                        </div>
-                    </div>
-                    <div class="py-3 d-flex align-items-center">
-                        <span class="btn btn-info btn-circle d-flex align-items-center">
-                            <i class="mdi mdi-diamond fs-4 text-white"></i>
-                        </span>
-                        <div class="ms-3">
-                            <h5 class="mb-0 fw-bold">Top Budgets</h5>
-                            <span class="text-muted fs-6">Sunil Joshi</span>
-                        </div>
-                        <div class="ms-auto">
-                            <span class="badge bg-light text-muted">+15%</span>
-                        </div>
-                    </div>
-
-                    <div class="pt-3 d-flex align-items-center">
-                        <span class="btn btn-danger btn-circle d-flex align-items-center">
-                            <i class="mdi mdi-content-duplicate fs-4 text-white"></i>
-                        </span>
-                        <div class="ms-3">
-                            <h5 class="mb-0 fw-bold">Best Designer</h5>
-                            <span class="text-muted fs-6">Nirav Joshi</span>
-                        </div>
-                        <div class="ms-auto">
-                            <span class="badge bg-light text-muted">+90%</span>
-                        </div>
-                    </div>
+                    <h4 class="card-title">Statistik Penjualan</h4>
+                    <canvas id="salesPieChart"></canvas>
                 </div>
             </div>
         </div>
+        
     @endif
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var pieChartCanvas = document.getElementById('salesPieChart')?.getContext('2d');
+        if (!pieChartCanvas) {
+            console.error("Canvas dengan id 'salesPieChart' tidak ditemukan!");
+            return;
+        }
+
+        var labelspieChart = @json($labelspieChart);
+        var salesDatapieChart = @json($salesDatapieChart);
+
+        new Chart(pieChartCanvas, {
+            type: 'pie',
+            data: {
+                labels: labelspieChart, 
+                   datasets: [{
+                    data: salesDatapieChart, 
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.7)',
+                        'rgba(54, 162, 235, 0.7)',
+                        'rgba(255, 206, 86, 0.7)',
+                        'rgba(75, 192, 192, 0.7)',
+                        'rgba(153, 102, 255, 0.7)',
+                        'rgba(255, 159, 64, 0.7)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true
+            }
+        });
+    });
+</script>
+
+
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         var chart = document.getElementById('salesChart')?.getContext('2d');
@@ -131,7 +115,8 @@
         var salesData = @json($salesData);
 
         var salesChart = new Chart(chart, {
-            type: 'bar',
+            // type: 'bar',
+            type: 'line',
             data: {
                 labels: labels,
                 datasets: [{
@@ -152,6 +137,9 @@
             }
         });
     });
+
+
+    
 </script>
 
 @endsection

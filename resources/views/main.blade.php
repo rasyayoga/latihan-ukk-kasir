@@ -49,6 +49,8 @@
                                      Buat Penjualan / Detail Harga
                                 @elseif(Route::currentRouteName() == 'sales.print.show')
                                      Print Invoice
+                                @elseif(Route::currentRouteName() == 'sales.create.member')
+                                     View Member
                                 @else
                                     Halaman Tidak Diketahui
                                 @endif

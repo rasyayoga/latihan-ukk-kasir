@@ -51,6 +51,7 @@ Route::middleware(['auth', 'is_employee'])->group(function () {
         Route::get('/create/post',[SalessController::class, 'post'])->name('post');
         Route::get('/print/{id}',[DetailSalesController::class, 'show'])->name('print.show');
         Route::get('/create/member/{id}', [SalessController::class, 'createmember'])->name('create.member');
+        Route::get('/exportexcel', [DetailSalesController::class, 'exportexcel'])->name('exportexcel');
     });
 });
 

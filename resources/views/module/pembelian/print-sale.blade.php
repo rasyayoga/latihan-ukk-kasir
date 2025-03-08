@@ -163,13 +163,15 @@
                                             </div>
                                     </div>
                                 </div>
-                                {{-- <div class="invoice-price-right">
+                                <div class="invoice-price-right">
                                     <small>TOTAL</small>
-                                    <span class="f-w-600" style="text-decoration: {{ $sale['poin'] > 0 ? 'line-through' : 'none' }};">Rp. {{ number_format($sale['total_price'], '0', ',', '.') }}</span>
-                                    @if ($sale['poin'] > 0)
+                                    {{-- style="text-decoration: {{ $sale['point'] > 0 ? 'line-through' : 'none' }};" --}}
                                     <span class="f-w-600">Rp. {{ number_format($sale['total_price'], '0', ',', '.') }}</span>
-                                    @endif
-                                </div> --}}
+                                    {{-- <br>
+                                    @if ($sale['point'] > 0)
+                                    <span class="f-w-600">Rp. {{ number_format($sale['total_price'], '0', ',', '.') }}</span>
+                                    @endif --}}
+                                </div>
                             </div>
                         </div>
                     </div>

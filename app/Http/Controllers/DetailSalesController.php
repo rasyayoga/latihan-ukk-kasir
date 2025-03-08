@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\salesimport;
 use App\Models\customers;
 use App\Models\detail_sales;
 use App\Models\saless;
@@ -9,8 +10,10 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade as PDF;
 use Barryvdh\DomPDF\Facade\Pdf as FacadePdf;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
-
+use Maatwebsite\Excel\Excel;
+use Maatwebsite\Excel\Facades\Excel as FacadesExcel;
 
 class DetailSalesController extends Controller
 {
@@ -20,27 +23,33 @@ class DetailSalesController extends Controller
     public function index()
     {
         $currentDate = Carbon::now()->toDateString();
-        $currentMonth = Carbon::now()->month;
-        $currentYear = Carbon::now()->year;
 
-        // Hitung jumlah transaksi (data yang terbuat) hari ini
+        // Hitung jumlah transaksi hari ini
         $todaySalesCount = detail_sales::whereDate('created_at', $currentDate)->count();
-
-        // Ambil total penjualan hanya untuk hari yang memiliki transaksi
-        $sales = detail_sales::selectRaw('EXTRACT(DAY FROM created_at) AS day, COUNT(*) AS total')
-            ->whereRaw('EXTRACT(MONTH FROM created_at) = ?', [$currentMonth])
-            ->whereRaw('EXTRACT(YEAR FROM created_at) = ?', [$currentYear])
-            ->groupByRaw('EXTRACT(DAY FROM created_at)')
-            ->orderByRaw('EXTRACT(DAY FROM created_at)')
+        
+        // Ambil seluruh data penjualan tanpa batasan bulan atau tahun
+        $sales = detail_sales::selectRaw('DATE(created_at) AS date, COUNT(*) AS total')
+            ->groupByRaw('DATE(created_at)')
+            ->orderByRaw('DATE(created_at)')
             ->get();
-
+        
         $detail_sales = detail_sales::with('saless', 'product')->get();
-
+        
         // Ubah hasil query menjadi array terstruktur
-        $labels = $sales->pluck('day')->map(fn($day) => $day . ' ' . Carbon::now()->format('F'))->toArray();
+        $labels = $sales->pluck('date')->map(fn($date) => Carbon::parse($date)->format('d M Y'))->toArray();
         $salesData = $sales->pluck('total')->toArray();
 
-        return view('module.dashboard.index', compact('labels', 'salesData', 'detail_sales', 'todaySalesCount'));
+        $productShell = detail_sales::with('product')
+        ->selectRaw('product_id, SUM(amount) as total_amount')
+        ->groupBy('product_id')
+        ->get();
+    
+        // Ambil nama produk sebagai label dan jumlah produk terjual sebagai data
+        $labelspieChart = $productShell->map(fn($item) => $item->product->name . ' : ' . $item->total_amount)->toArray();
+        $salesDatapieChart = $productShell->map(fn($item) => $item->total_amount)->toArray();
+        
+        return view('module.dashboard.index', compact('labels', 'salesData', 'detail_sales', 'todaySalesCount', 'productShell', 'labelspieChart', 'salesDatapieChart'));
+        
     }
 
 
@@ -55,12 +64,19 @@ class DetailSalesController extends Controller
             $sale->update([
                 'total_point' => $customer->point,
                 'total_pay' => $sale->total_pay - $customer->point,
-                'total_return' => $sale->total_return + $customer->point
-
+                'total_return' => $sale->total_return + $customer->point,
+                'total_discount' => $sale->total_price - $customer->point,
             ]);
+
             $customer->update([
-                'name' => $request->name,
+                'name' => $request->name ? $request->name : $customer->name,
                 'point' => 0
+            ]);
+        }
+        if ($request->name) {
+            $customer = customers::where('id', $request->customer_id)->first();
+            $customer->update([
+                'name' => $request->name
             ]);
         }
         return view('module.pembelian.print-sale', compact('sale'));
@@ -77,6 +93,13 @@ class DetailSalesController extends Controller
         } catch (\Exception $e) {
             Log::error('Gagal mengunduh PDF: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Gagal mengunduh PDF');
+        }
+    }
+
+    public function exportexcel()
+    {
+        if (Auth::user()->role == 'employee') {
+            return FacadesExcel::download(new salesimport, 'Penjualan.xlsx');
         }
     }
     /**

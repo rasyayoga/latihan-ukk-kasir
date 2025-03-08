@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->integer('sale_id');
             $table->integer('product_id');
-            $table->integer('amount');
-            $table->integer('subtotal');
+            $table->bigInteger('amount');
+            $table->bigInteger('subtotal');
             $table->timestamps();
         });
     }

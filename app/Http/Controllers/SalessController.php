@@ -137,8 +137,8 @@ class SalessController extends Controller
                     'created_at' => now(),
                     'updated_at' => now(),
                 ];
-
-                detail_sales::insert($detailSalesData);
+                // //menyebabkan duplikasi data
+                // detail_sales::insert($detailSalesData);
 
                 // Update stok produk di database
                 $product = products::find($productId);
@@ -150,6 +150,7 @@ class SalessController extends Controller
                     $product->update(['stock' => $newStock]);
                 }
             }
+            detail_sales::insert($detailSalesData);
             return redirect()->route('sales.create.member', ['id' => saless::latest()->first()->id])
                 ->with('message', 'Silahkan daftar sebagai member');
         } else {
@@ -181,7 +182,7 @@ class SalessController extends Controller
                     'updated_at' => now(),
                 ];
 
-                detail_sales::insert($detailSalesData);
+             
 
                 // Update stok produk di database
                 $product = products::find($productId);
@@ -193,6 +194,7 @@ class SalessController extends Controller
                     $product->update(['stock' => $newStock]);
                 }
             }
+            detail_sales::insert($detailSalesData);
             return redirect()->route('sales.print.show', ['id' => $sales->id])->with('Silahkan Print');
         }
 

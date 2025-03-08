@@ -14,13 +14,13 @@ return new class extends Migration
         Schema::create('saless', function (Blueprint $table) {
             $table->id();
             $table->date("sale_date");
-            $table->integer("total_price");
-            $table->integer("total_pay");
-            $table->integer("total_return")->nullable();
+            $table->bigInteger("total_price");
+            $table->bigInteger("total_pay");
+            $table->bigInteger("total_return")->nullable();
             $table->integer("customer_id")->nullable();
             $table->integer("user_id");
             $table->integer("point")->nullable();
-            $table->integer("total_point")->nullable();
+            $table->bigInteger("total_point")->nullable();
             $table->timestamps();
         });
     }
