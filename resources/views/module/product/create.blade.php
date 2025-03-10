@@ -13,8 +13,9 @@
         <!-- Nama Produk -->
         <div class="mb-3">
           <label for="name" class="form-label">Nama Produk</label>
-          <input type="text" class="form-control border-secondary"  id="name" name="name" required value={{ old('name') }}>
-        </div>
+          <input type="text" class="form-control border-secondary" id="name" name="name" required maxlength="50" value="{{ old('name') }}">
+      </div>
+      
       
         <!-- Harga -->
         <div class="mb-3">

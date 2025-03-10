@@ -77,7 +77,7 @@
                                         <div class="form-group">
                                             <label for="name" class="form-label">Nama Member (identitas)</label>
                                             <input type="text" name="name" id="name" class="form-control"
-                                                required value="{{ $sale['customer']['name'] }}">
+                                                required value="{{ $sale['customer']['name'] }}" maxlength="50">
                                         </div>
                                         <div class="form-group">
                                             <label for="poin" class="form-label">Poin</label>

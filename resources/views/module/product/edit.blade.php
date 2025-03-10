@@ -11,7 +11,7 @@
         <!-- Nama Produk -->
         <div class="mb-3">
           <label for="name" class="form-label">Nama Produk</label>
-          <input type="text" class="form-control border-secondary"  id="name" name="name" value="{{$item->name}}" required>
+          <input type="text" class="form-control border-secondary"  id="name" name="name" maxlength="50" value="{{$item->name}}" required>
         </div>
       
         <!-- Harga -->
