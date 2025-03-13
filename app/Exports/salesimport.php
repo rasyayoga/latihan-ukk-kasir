@@ -46,8 +46,8 @@ class salesimport implements FromCollection, WithHeadings, WithMapping
                 return optional($detail->product)->name
                     ? optional($detail->product)->name . ' (' . $detail->amount . ' : Rp. ' . number_format( $detail->subtotal, 0, ',', '.') . ')'
                     : 'Produk tidak tersedia';
-            })->implode(', '), // Menggabungkan semua produk
-            $item->detail_sales->sum('subtotal'), // Menjumlahkan subtotal dari semua detail
+            })->implode(', '), 
+            $item->detail_sales->sum('subtotal'), 
             $item->total_pay,
             $item->total_price - optional($item->customer)->point ?? 0,
             $item->total_return,

@@ -17,9 +17,18 @@ class SalessController extends Controller
      */
     public function index()
     {
+        // $max_data = 10;
+        // $query = saless::with('customer', 'user', 'detail_sales')->orderBy('id','desc');
+     
+        // if (request('search')) {
+        //     $query->where('sale_date', 'like', '%' . request('search') . '%');
+        // }
+    
+        // $saless = $query->paginate($max_data)->withQueryString();
         $saless = saless::with('customer', 'user', 'detail_sales')->orderBy('id','desc')->get();
         return view('module.pembelian.index', compact('saless'));
     }
+    
 
 
     /**
@@ -83,7 +92,6 @@ class SalessController extends Controller
         ], [
             'total_pay.required' => 'Berapa jumlah uang yang dibayarkan?',
         ]);
-
         $newPrice = (int) preg_replace('/\D/', '', $request->total_price);
         $newPay = (int) preg_replace('/\D/', '', $request->total_pay);
         $newreturn = $newPay - $newPrice;

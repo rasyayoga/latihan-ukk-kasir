@@ -26,9 +26,19 @@
                             </a>
                         </div>
                         @endif
+                        {{-- <form id="todo-form" action="{{ route('sales') }}" method="get">
+                            <div class="input-group mb-3 mt-4">
+                                <input type="name" class="form-control" name="search" value="{{ request('search') }}" 
+                                    placeholder="masukkan kata kunci">
+                                <button class="btn btn-secondary" type="submit">
+                                    Cari
+                                </button>
+                            </div>
+                        </form> --}}
                     </div>
                     <div class="table-responsive">
-                        <table id="salesTable" class="table">
+                        <table id="myTable" class="table">
+                            {{-- <table id="salesTable" class="table"> --}}
                             <thead>
                                 <tr>
                                     <th scope="col">#</th>
@@ -57,6 +67,7 @@
                                             </div>
                                         </td>
                                     </tr>
+                                
                                     <!-- Modal untuk melihat detail penjualan -->
                                     <div class="modal fade" id="lihat-{{$sale->id}}" tabindex="-1" aria-labelledby="modalLihat" aria-hidden="true">
                                         <div class="modal-dialog modal-dialog-scrollable">
@@ -114,6 +125,10 @@
                                 @endforeach
                             </tbody>
                         </table>
+                        {{-- <!-- Pagination -->
+<div class="d-flex justify-content-center">
+    {{ $saless->links('vendor.pagination.bootstrap-5') }}
+</div> --}}
                     </div>
                 </div>
             </div>
